@@ -1,7 +1,7 @@
-package me.zombieman.fewernightvision.listeners;
+package me.zombieman.nightvisionplus.listeners;
 
-import me.zombieman.fewernightvision.NightVisionPlus;
-import me.zombieman.fewernightvision.effects.PlayerEffects;
+import me.zombieman.nightvisionplus.NightVisionPlus;
+import me.zombieman.nightvisionplus.effects.PlayerEffects;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -29,7 +29,7 @@ public class JoinListener implements Listener {
             File playerDataFile = new File(plugin.getDataFolder(), "playerData.yml");
             FileConfiguration playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
             PlayerEffects pEffects = new PlayerEffects();
-            boolean hasEnabled = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nv", false);
+            boolean hasEnabled = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
             if (hasEnabled) {
                 pEffects.pEffect(p, true);
             }

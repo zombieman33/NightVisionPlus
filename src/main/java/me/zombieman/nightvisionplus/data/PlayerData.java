@@ -1,6 +1,6 @@
-package me.zombieman.fewernightvision.data;
+package me.zombieman.nightvisionplus.data;
 
-import me.zombieman.fewernightvision.NightVisionPlus;
+import me.zombieman.nightvisionplus.NightVisionPlus;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -25,11 +25,11 @@ public class PlayerData {
 
         if (b) {
             playerDataConfig.set(path + ".ign", pName);
-            playerDataConfig.set(path + ".nv", true);
+            playerDataConfig.set(path + ".nvp", true);
             saveDataConfig(playerDataConfig, playerDataFile);
         } else {
             playerDataConfig.set(path + ".ign", pName);
-            playerDataConfig.set(path + ".nv", false);
+            playerDataConfig.set(path + ".nvp", false);
             saveDataConfig(playerDataConfig, playerDataFile);
         }
     }

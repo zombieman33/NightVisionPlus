@@ -1,7 +1,9 @@
-me/zombieman/fewernightvision/commands/NightVisionCommand.class
-me/zombieman/fewernightvision/effects/PlayerEffects.class
-me/zombieman/fewernightvision/commands/MainCommands.class
-me/zombieman/fewernightvision/data/PlayerData.class
-me/zombieman/fewernightvision/utils/ColorUtils.class
-me/zombieman/fewernightvision/listeners/JoinListener.class
-me/zombieman/fewernightvision/NightVisionPlus.class
+me/zombieman/nightvisionplus/commands/NightVisionCommand.class
+me/zombieman/nightvisionplus/listeners/MilkDrinkListener.class
+me/zombieman/nightvisionplus/listeners/DeathListener.class
+me/zombieman/nightvisionplus/listeners/JoinListener.class
+me/zombieman/nightvisionplus/NightVisionPlus.class
+me/zombieman/nightvisionplus/commands/MainCommands.class
+me/zombieman/nightvisionplus/effects/PlayerEffects.class
+me/zombieman/nightvisionplus/utils/ColorUtils.class
+me/zombieman/nightvisionplus/data/PlayerData.class

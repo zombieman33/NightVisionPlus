@@ -1,9 +1,9 @@
-package me.zombieman.fewernightvision.commands;
+package me.zombieman.nightvisionplus.commands;
 
-import me.zombieman.fewernightvision.NightVisionPlus;
-import me.zombieman.fewernightvision.data.PlayerData;
-import me.zombieman.fewernightvision.effects.PlayerEffects;
-import me.zombieman.fewernightvision.utils.ColorUtils;
+import me.zombieman.nightvisionplus.NightVisionPlus;
+import me.zombieman.nightvisionplus.data.PlayerData;
+import me.zombieman.nightvisionplus.effects.PlayerEffects;
+import me.zombieman.nightvisionplus.utils.ColorUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -40,7 +40,7 @@ public class NightVisionCommand implements CommandExecutor {
             File playerDataFile = new File(plugin.getDataFolder(), "playerData.yml");
             FileConfiguration playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
             UUID pUUID = player.getUniqueId();
-            boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nv", false);
+            boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
 
             if (args.length >= 1) {
                 String targetName = args[0];
@@ -52,9 +52,9 @@ public class NightVisionCommand implements CommandExecutor {
                     UUID tUUID = target.getUniqueId();
 
                     if (player.hasPermission("fewernightvision.command.apply.other")) {
-                        boolean TargetWantsEnable = playerDataConfig.getBoolean("nightVision.player." + tUUID + ".nv", false);
+                        boolean TargetWantsEnable = playerDataConfig.getBoolean("nightVision.player." + tUUID + ".nvp", false);
                         if (!TargetWantsEnable) {
-                            playerDataConfig.set("nightVision.player." + tUUID + ".nv", true);
+                            playerDataConfig.set("nightVision.player." + tUUID + ".nvp", true);
                             playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
                             savePlayerDataConfig(playerDataConfig, playerDataFile);
                             pEffects.pEffect(target, true);
@@ -67,7 +67,7 @@ public class NightVisionCommand implements CommandExecutor {
                                         .replace("%target-player%", targetName)));
                             }
                         } else {
-                            playerDataConfig.set("nightVision.player." + tUUID + ".nv", false);
+                            playerDataConfig.set("nightVision.player." + tUUID + ".nvp", false);
                             playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
                             savePlayerDataConfig(playerDataConfig, playerDataFile);
                             pEffects.pEffect(target, false);
@@ -88,13 +88,13 @@ public class NightVisionCommand implements CommandExecutor {
                 if (!wantsEnable) {
                     pEffects.pEffect(player, true);
 //                    pData.savePlayerData(player, true);
-                    playerDataConfig.set("nightVision.player." + pUUID + ".nv", true);
+                    playerDataConfig.set("nightVision.player." + pUUID + ".nvp", true);
                     playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
                     savePlayerDataConfig(playerDataConfig, playerDataFile);
                     player.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessage")));
                 } else {
                     pEffects.pEffect(player, false);
-                    playerDataConfig.set("nightVision.player." + pUUID + ".nv", false);
+                    playerDataConfig.set("nightVision.player." + pUUID + ".nvp", false);
                     playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
                     savePlayerDataConfig(playerDataConfig, playerDataFile);
                     player.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessage")));

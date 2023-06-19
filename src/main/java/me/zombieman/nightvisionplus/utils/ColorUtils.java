@@ -1,7 +1,7 @@
-package me.zombieman.fewernightvision.utils;
+package me.zombieman.nightvisionplus.utils;
 
 import com.tcoded.legacycolorcodeparser.LegacyColorCodeParser;
-import me.zombieman.fewernightvision.NightVisionPlus;
+import me.zombieman.nightvisionplus.NightVisionPlus;
 import org.bukkit.ChatColor;
 
 public class ColorUtils {

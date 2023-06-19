@@ -1,10 +1,12 @@
-package me.zombieman.fewernightvision;
+package me.zombieman.nightvisionplus;
 
-import me.zombieman.fewernightvision.commands.MainCommands;
-import me.zombieman.fewernightvision.commands.NightVisionCommand;
-import me.zombieman.fewernightvision.data.PlayerData;
-import me.zombieman.fewernightvision.effects.PlayerEffects;
-import me.zombieman.fewernightvision.listeners.JoinListener;
+import me.zombieman.nightvisionplus.commands.MainCommands;
+import me.zombieman.nightvisionplus.commands.NightVisionCommand;
+import me.zombieman.nightvisionplus.data.PlayerData;
+import me.zombieman.nightvisionplus.effects.PlayerEffects;
+import me.zombieman.nightvisionplus.listeners.DeathListener;
+import me.zombieman.nightvisionplus.listeners.JoinListener;
+import me.zombieman.nightvisionplus.listeners.MilkDrinkListener;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -39,7 +41,10 @@ public final class NightVisionPlus extends JavaPlugin {
 
         new PlayerData(this);
         new PlayerEffects();
+
         new JoinListener(this);
+        new DeathListener(this);
+        new MilkDrinkListener(this);
     }
 
     @Override

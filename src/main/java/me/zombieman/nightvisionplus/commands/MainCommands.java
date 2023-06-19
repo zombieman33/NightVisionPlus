@@ -1,8 +1,8 @@
-package me.zombieman.fewernightvision.commands;
+package me.zombieman.nightvisionplus.commands;
 
-import me.zombieman.fewernightvision.NightVisionPlus;
-import me.zombieman.fewernightvision.effects.PlayerEffects;
-import me.zombieman.fewernightvision.utils.ColorUtils;
+import me.zombieman.nightvisionplus.NightVisionPlus;
+import me.zombieman.nightvisionplus.effects.PlayerEffects;
+import me.zombieman.nightvisionplus.utils.ColorUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -65,7 +65,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         long startTime = System.currentTimeMillis();
                         for (Player onlinePlayers : Bukkit.getOnlinePlayers()) {
                             UUID onlineUUID = onlinePlayers.getUniqueId();
-                            boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + onlineUUID + ".nv", false);
+                            boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + onlineUUID + ".nvp", false);
                             if (wantsEnable) {
                                 pEffects.pEffect(onlinePlayers, false);
                             }
@@ -87,17 +87,17 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     }
                 }
             } else {
-                boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nv", false);
+                boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
                 if (!wantsEnable) {
                     pEffects.pEffect(player, true);
 //                    pData.savePlayerData(player, true);
-                    playerDataConfig.set("nightVision.player." + pUUID + ".nv", true);
+                    playerDataConfig.set("nightVision.player." + pUUID + ".nvp", true);
                     playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
                     savePlayerDataConfig(playerDataConfig, playerDataFile);
                     player.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessage")));
                 } else {
                     pEffects.pEffect(player, false);
-                    playerDataConfig.set("nightVision.player." + pUUID + ".nv", false);
+                    playerDataConfig.set("nightVision.player." + pUUID + ".nvp", false);
                     playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
                     savePlayerDataConfig(playerDataConfig, playerDataFile);
                     player.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessage")));

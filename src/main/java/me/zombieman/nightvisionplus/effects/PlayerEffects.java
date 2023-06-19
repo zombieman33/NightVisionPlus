@@ -1,4 +1,4 @@
-package me.zombieman.fewernightvision.effects;
+package me.zombieman.nightvisionplus.effects;
 
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
