@@ -1,0 +1,11 @@
+name: NightVisionPlus
+version: '2.0.0'
+main: me.zombieman.nightvisionplus.NightVisionPlus
+api-version: 1.19
+commands:
+  night-vision:
+    aliases:
+      - nv
+  nightvisionplus:
+    aliases:
+      - nvp
