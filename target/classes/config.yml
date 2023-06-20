@@ -4,5 +4,5 @@ disableMessage: '&cYou disabled night vision'
 enableMessageOthers: '&aYou enabled night vision for: %target-player%'
 disableMessageOthers: '&cYou disabled night vision for: %target-player%'
 
-enableMessageToOther: '&a%player% gave you enabled night'
+enableMessageToOther: '&a%player% gave you enabled night vision'
 disableMessageToOther: '&c%player% removed your night vision'
