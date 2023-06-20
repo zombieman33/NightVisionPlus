@@ -10,9 +10,11 @@ public class PlayerEffects {
         PotionEffectType effectType = PotionEffectType.NIGHT_VISION;
         int durationSeconds = 999999999;
         int amplifier = 1;
-        PotionEffect effect = new PotionEffect(effectType, durationSeconds, amplifier);
+        PotionEffect effect = new PotionEffect(effectType, durationSeconds, amplifier,true, false);
         if (b) {
-            p.addPotionEffect(effect, true);
+            if (!p.hasPotionEffect(effectType)) {
+                p.addPotionEffect(effect, true);
+            }
         } else {
             p.removePotionEffect(effectType);
         }

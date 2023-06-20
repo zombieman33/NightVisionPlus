@@ -1,9 +1,13 @@
+me/zombieman/nightvisionplus/listeners/MilkConsumeEvent.class
+me/zombieman/nightvisionplus/listeners/IgnoredCommands$1.class
+me/zombieman/nightvisionplus/effects/PlayerEffects.class
+me/zombieman/nightvisionplus/listeners/DeathListener$1.class
 me/zombieman/nightvisionplus/commands/NightVisionCommand.class
-me/zombieman/nightvisionplus/listeners/MilkDrinkListener.class
+me/zombieman/nightvisionplus/listeners/IgnoredCommands.class
+me/zombieman/nightvisionplus/listeners/MilkConsumeEvent$1.class
 me/zombieman/nightvisionplus/listeners/DeathListener.class
 me/zombieman/nightvisionplus/listeners/JoinListener.class
 me/zombieman/nightvisionplus/NightVisionPlus.class
 me/zombieman/nightvisionplus/commands/MainCommands.class
-me/zombieman/nightvisionplus/effects/PlayerEffects.class
 me/zombieman/nightvisionplus/utils/ColorUtils.class
 me/zombieman/nightvisionplus/data/PlayerData.class
