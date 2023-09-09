@@ -36,7 +36,7 @@ public class NightVisionCommand implements CommandExecutor {
         PlayerData pData = new PlayerData(plugin);
         PlayerEffects pEffects = new PlayerEffects();
 
-        if (player.hasPermission("fewernightvision.command.apply")) {
+        if (player.hasPermission("nightvisionplus.command.apply")) {
             File playerDataFile = new File(plugin.getDataFolder(), "playerData.yml");
             FileConfiguration playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
             UUID pUUID = player.getUniqueId();
@@ -51,7 +51,7 @@ public class NightVisionCommand implements CommandExecutor {
                 } else {
                     UUID tUUID = target.getUniqueId();
 
-                    if (player.hasPermission("fewernightvision.command.apply.other")) {
+                    if (player.hasPermission("nightvisionplus.command.apply.other")) {
                         boolean TargetWantsEnable = playerDataConfig.getBoolean("nightVision.player." + tUUID + ".nvp", false);
                         if (!TargetWantsEnable) {
                             playerDataConfig.set("nightVision.player." + tUUID + ".nvp", true);

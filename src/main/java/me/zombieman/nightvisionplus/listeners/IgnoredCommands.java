@@ -18,40 +18,68 @@ import java.util.UUID;
 
 public class IgnoredCommands implements Listener {
     private final NightVisionPlus plugin;
+
     public IgnoredCommands(NightVisionPlus plugin) {
         this.plugin = plugin;
         this.plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
+
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {
         Player p = event.getPlayer();
         String command = event.getMessage();
+        UUID pUUID = p.getUniqueId();
+        File playerDataFile = new File(plugin.getDataFolder(), "playerData.yml");
+        FileConfiguration playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
 
-        List<String> ignoredCommands = new ArrayList<>();
+        if (p.hasPermission("nightvisionplus.command.apply")) {
+            List<String> ignoredCommands = new ArrayList<>();
+            ignoredCommands.add("/nv");
+            ignoredCommands.add("/night-vision");
+            ignoredCommands.add("/nightvisionplus:night-vision");
+            ignoredCommands.add("/nightvisionplus:nv");
+            ignoredCommands.add("/nightvisionplus:nightvisionplus reset");
+            ignoredCommands.add("/nightvisionplus:nvp reset");
+            ignoredCommands.add("/nightvisionplus:nightvisionplus reset all");
+            ignoredCommands.add("/nightvisionplus:nvp reset all");
+            ignoredCommands.add("/nightvisionplus:nightvisionplus reset playerData.yml");
+            ignoredCommands.add("/nightvisionplus:nvp reset playerData.yml");
 
-        String pName = p.getName();
-        ignoredCommands.add("/heal");
-        ignoredCommands.add("/heal " + pName);
-        ignoredCommands.add("/effect clear");
-        ignoredCommands.add("/effect clear " + pName);
-        ignoredCommands.add("/effect clear " + pName + " minecraft:night_vision");
-        ignoredCommands.add("/effect clear " + pName + " night_vision");
-        ignoredCommands.add("/effect clear @p");
-
-        if (ignoredCommands.contains(command)) {
-            UUID pUUID = p.getUniqueId();
-            File playerDataFile = new File(plugin.getDataFolder(), "playerData.yml");
-            FileConfiguration playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
-            boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
-            if (wantsEnable) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        PlayerEffects playerEffects = new PlayerEffects();
-                        playerEffects.pEffect(p, true);
+            if (!command.startsWith("/nv")) {
+                for (Player oPlayer : Bukkit.getOnlinePlayers()) {
+                    boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + oPlayer.getUniqueId() + ".nvp", false);
+                    if (wantsEnable) {
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                PlayerEffects playerEffects = new PlayerEffects();
+                                playerEffects.pEffect(oPlayer, true);
+                            }
+                        }.runTaskLater(plugin, 5);
                     }
-                }.runTaskLater(plugin, 1);
+                }
             }
         }
     }
 }
+
+//        List<String> ignoredCommands = new ArrayList<>();
+//
+//        String pName = p.getName();
+//        ignoredCommands.add("/heal");
+//        ignoredCommands.add("/heal " + pName);
+//        ignoredCommands.add("/effect clear");
+//        ignoredCommands.add("/effect clear " + pName);
+//        ignoredCommands.add("/effect clear " + pName + " minecraft:night_vision");
+//        ignoredCommands.add("/effect clear " + pName + " night_vision");
+//        ignoredCommands.add("/effect clear @p");
+//        ignoredCommands.add("/v");
+//        ignoredCommands.add("/sv");
+//        ignoredCommands.add("/vanish");
+//        ignoredCommands.add("/supervanish");
+//        ignoredCommands.add("/supervanish:v");
+//        ignoredCommands.add("/supervanish:sv");
+//        ignoredCommands.add("/supervanish:vanish");
+//        ignoredCommands.add("/supervanish:supervanish");
+
+//        if (ignoredCommands.contains(command)) {
