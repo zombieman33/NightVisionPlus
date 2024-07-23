@@ -54,7 +54,7 @@ public class NightVisionCommand implements CommandExecutor {
                         if (!TargetWantsEnable) {
                             playerDataConfig.set("nightVision.player." + tUUID + ".nvp", true);
                             playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
-                            PlayerData.savePlayerData(plugin, player);
+                            PlayerData.savePlayerData(plugin, target);
                             pEffects.pEffect(target, true);
                             player.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessageOthers")
                                     .replace("%player%", player.getName())
@@ -67,7 +67,7 @@ public class NightVisionCommand implements CommandExecutor {
                         } else {
                             playerDataConfig.set("nightVision.player." + tUUID + ".nvp", false);
                             playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
-                            PlayerData.savePlayerData(plugin, player);
+                            PlayerData.savePlayerData(plugin, target);
                             pEffects.pEffect(target, false);
                             player.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessageOthers")
                                     .replace("%player%", player.getName())
