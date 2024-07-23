@@ -33,12 +33,10 @@ public class NightVisionCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        PlayerData pData = new PlayerData(plugin);
         PlayerEffects pEffects = new PlayerEffects();
 
         if (player.hasPermission("nightvisionplus.command.apply")) {
-            File playerDataFile = new File(plugin.getDataFolder(), "playerData.yml");
-            FileConfiguration playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
+            FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, player.getUniqueId());
             UUID pUUID = player.getUniqueId();
             boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
 
@@ -52,11 +50,11 @@ public class NightVisionCommand implements CommandExecutor {
                     UUID tUUID = target.getUniqueId();
 
                     if (player.hasPermission("nightvisionplus.command.apply.other")) {
-                        boolean TargetWantsEnable = playerDataConfig.getBoolean("nightVision.player." + tUUID + ".nvp", false);
+                        boolean TargetWantsEnable = PlayerData.getPlayerDataConfig(plugin, player.getUniqueId()).getBoolean("nightVision.player." + tUUID + ".nvp", false);
                         if (!TargetWantsEnable) {
                             playerDataConfig.set("nightVision.player." + tUUID + ".nvp", true);
                             playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
-                            savePlayerDataConfig(playerDataConfig, playerDataFile);
+                            PlayerData.savePlayerData(plugin, player);
                             pEffects.pEffect(target, true);
                             player.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessageOthers")
                                     .replace("%player%", player.getName())
@@ -69,7 +67,7 @@ public class NightVisionCommand implements CommandExecutor {
                         } else {
                             playerDataConfig.set("nightVision.player." + tUUID + ".nvp", false);
                             playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
-                            savePlayerDataConfig(playerDataConfig, playerDataFile);
+                            PlayerData.savePlayerData(plugin, player);
                             pEffects.pEffect(target, false);
                             player.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessageOthers")
                                     .replace("%player%", player.getName())
@@ -90,13 +88,13 @@ public class NightVisionCommand implements CommandExecutor {
 //                    pData.savePlayerData(player, true);
                     playerDataConfig.set("nightVision.player." + pUUID + ".nvp", true);
                     playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
-                    savePlayerDataConfig(playerDataConfig, playerDataFile);
+                    PlayerData.savePlayerData(plugin, player);
                     player.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessage")));
                 } else {
                     pEffects.pEffect(player, false);
                     playerDataConfig.set("nightVision.player." + pUUID + ".nvp", false);
                     playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
-                    savePlayerDataConfig(playerDataConfig, playerDataFile);
+                    PlayerData.savePlayerData(plugin, player);
                     player.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessage")));
                 }
             }
@@ -104,13 +102,6 @@ public class NightVisionCommand implements CommandExecutor {
             player.sendMessage(ChatColor.RED + "You don't have permission to run this command.");
         }
         return true;
-    }
-    private void savePlayerDataConfig(FileConfiguration config, File configFile) {
-        try {
-            config.save(configFile);
-        } catch (IOException e) {
-            throw new RuntimeException("An error occurred while saving the player data config.", e);
-        }
     }
 }
 

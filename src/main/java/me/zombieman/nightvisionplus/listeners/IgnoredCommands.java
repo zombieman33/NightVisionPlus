@@ -1,6 +1,7 @@
 package me.zombieman.nightvisionplus.listeners;
 
 import me.zombieman.nightvisionplus.NightVisionPlus;
+import me.zombieman.nightvisionplus.data.PlayerData;
 import me.zombieman.nightvisionplus.effects.PlayerEffects;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -29,8 +30,7 @@ public class IgnoredCommands implements Listener {
         Player p = event.getPlayer();
         String command = event.getMessage();
         UUID pUUID = p.getUniqueId();
-        File playerDataFile = new File(plugin.getDataFolder(), "playerData.yml");
-        FileConfiguration playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
+        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, pUUID);
 
         if (p.hasPermission("nightvisionplus.command.apply")) {
             List<String> ignoredCommands = new ArrayList<>();
@@ -42,8 +42,8 @@ public class IgnoredCommands implements Listener {
             ignoredCommands.add("/nightvisionplus:nvp reset");
             ignoredCommands.add("/nightvisionplus:nightvisionplus reset all");
             ignoredCommands.add("/nightvisionplus:nvp reset all");
-            ignoredCommands.add("/nightvisionplus:nightvisionplus reset playerData.yml");
-            ignoredCommands.add("/nightvisionplus:nvp reset playerData.yml");
+            ignoredCommands.add("/nightvisionplus:nightvisionplus reset PlayerData");
+            ignoredCommands.add("/nightvisionplus:nvp reset PlayerData");
 
             if (!command.startsWith("/nv")) {
                 for (Player oPlayer : Bukkit.getOnlinePlayers()) {

@@ -1,6 +1,7 @@
 package me.zombieman.nightvisionplus.listeners;
 
 import me.zombieman.nightvisionplus.NightVisionPlus;
+import me.zombieman.nightvisionplus.data.PlayerData;
 import me.zombieman.nightvisionplus.effects.PlayerEffects;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -26,8 +27,7 @@ public class MilkConsumeEvent implements Listener {
         if (event.getItem().getType().name().equals("MILK_BUCKET")) {
             Player p = event.getPlayer();
             UUID pUUID = p.getUniqueId();
-            File playerDataFile = new File(plugin.getDataFolder(), "playerData.yml");
-            FileConfiguration playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
+            FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, pUUID);
             boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
             if (wantsEnable) {
                 new BukkitRunnable() {

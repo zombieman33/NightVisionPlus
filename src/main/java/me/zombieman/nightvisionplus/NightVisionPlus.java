@@ -3,6 +3,7 @@ package me.zombieman.nightvisionplus;
 import me.zombieman.nightvisionplus.commands.MainCommands;
 import me.zombieman.nightvisionplus.commands.NightVisionCommand;
 import me.zombieman.nightvisionplus.data.PlayerData;
+import me.zombieman.nightvisionplus.data.PlayerManager;
 import me.zombieman.nightvisionplus.effects.PlayerEffects;
 import me.zombieman.nightvisionplus.listeners.DeathListener;
 import me.zombieman.nightvisionplus.listeners.IgnoredCommands;
@@ -19,12 +20,6 @@ public final class NightVisionPlus extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
 
-        File playerDataFile = new File(getDataFolder(), "playerData.yml");
-        if (!playerDataFile.exists()) {
-            getLogger().info("Player Data file not found, creating...");
-            saveResource("playerData.yml", false);
-        }
-
         File configFile = new File(getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             getLogger().info("Config file not found, creating...");
@@ -40,7 +35,8 @@ public final class NightVisionPlus extends JavaPlugin {
         PluginCommand mainCmd = getCommand("nightvisionplus");
         if (mainCmd != null) mainCmd.setExecutor(mainCommands);
 
-        new PlayerData(this);
+        new PlayerData();
+        new PlayerManager(this);
         new PlayerEffects();
 
         new JoinListener(this);

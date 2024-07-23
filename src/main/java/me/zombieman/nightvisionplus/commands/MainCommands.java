@@ -1,6 +1,7 @@
 package me.zombieman.nightvisionplus.commands;
 
 import me.zombieman.nightvisionplus.NightVisionPlus;
+import me.zombieman.nightvisionplus.data.PlayerData;
 import me.zombieman.nightvisionplus.effects.PlayerEffects;
 import me.zombieman.nightvisionplus.utils.ColorUtils;
 import net.md_5.bungee.api.ChatColor;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class MainCommands implements CommandExecutor, TabCompleter {
     private final NightVisionPlus plugin;
@@ -34,8 +36,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         }
         Player player = (Player) sender;
         UUID pUUID = player.getUniqueId();
-        File playerDataFile = new File(plugin.getDataFolder(), "playerData.yml");
-        FileConfiguration playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
+        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, pUUID);
         PlayerEffects pEffects = new PlayerEffects();
 
         if (player.hasPermission("nightvisionplus.command.use")) {
@@ -44,7 +45,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     long startTime = System.currentTimeMillis();
                     try {
                         plugin.reloadConfig();
-                        savePlayerDataConfig(playerDataConfig, playerDataFile);
+                        PlayerData.reloadAllPlayerData(plugin);
                         long endTime = System.currentTimeMillis();
                         long elapsedTime = endTime - startTime;
 
@@ -54,23 +55,16 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         player.sendMessage(ChatColor.RED + "An error occurred while reloading the plugin: " + e.getMessage());
                     }
                 } else if (args[0].equalsIgnoreCase("reset")) {
-//                    if (args[1].equalsIgnoreCase("config.yml")) {
-//                        long startTime = System.currentTimeMillis();
-//                        plugin.saveResource("config.yml", true);
-//                        plugin.reloadConfig();
-//                        long endTime = System.currentTimeMillis();
-//                        long time = endTime - startTime + 1;
-//                        player.sendMessage(ChatColor.GREEN + "You successfully reset " + args[1] + ChatColor.AQUA + " (" + time + "ms)");
-                    if (args[1].equalsIgnoreCase("playerData.yml")) {
+                    if (args[1].equalsIgnoreCase("config.yml")) {
                         long startTime = System.currentTimeMillis();
-                        for (Player onlinePlayers : Bukkit.getOnlinePlayers()) {
-                            UUID onlineUUID = onlinePlayers.getUniqueId();
-                            boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + onlineUUID + ".nvp", false);
-                            if (wantsEnable) {
-                                pEffects.pEffect(onlinePlayers, false);
-                            }
-                        }
-                        plugin.saveResource("playerData.yml", true);
+                        plugin.saveResource("config.yml", true);
+                        plugin.reloadConfig();
+                        long endTime = System.currentTimeMillis();
+                        long time = endTime - startTime + 1;
+                        player.sendMessage(ChatColor.GREEN + "You successfully reset " + args[1] + ChatColor.AQUA + " (" + time + "ms)");
+                    } else if (args[1].equalsIgnoreCase("playerData")) {
+                        long startTime = System.currentTimeMillis();
+                        PlayerData.removeAllPlayerFiles(plugin);
                         long endTime = System.currentTimeMillis();
                         long time = endTime - startTime + 1;
                         player.sendMessage(ChatColor.GREEN + "You successfully reset " + args[1] + ChatColor.AQUA + " (" + time + "ms)");
@@ -78,12 +72,12 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         long startTime = System.currentTimeMillis();
                         plugin.saveResource("config.yml", true);
                         plugin.reloadConfig();
-                        plugin.saveResource("playerData.yml", true);
+                        PlayerData.removeAllPlayerFiles(plugin);
                         long endTime = System.currentTimeMillis();
                         long time = endTime - startTime + 1;
                         player.sendMessage(ChatColor.GREEN + "You successfully reset all configs " + ChatColor.AQUA + "(" + time + "ms)");
                     } else {
-                        player.sendMessage(ChatColor.YELLOW + "/nvp reset <all, config.yml, playerData.yml>");
+                        player.sendMessage(ChatColor.YELLOW + "/nvp reset <all, config.yml, PlayerData>");
                     }
                 }
             } else {
@@ -93,13 +87,13 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 //                    pData.savePlayerData(player, true);
                     playerDataConfig.set("nightVision.player." + pUUID + ".nvp", true);
                     playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
-                    savePlayerDataConfig(playerDataConfig, playerDataFile);
+                    PlayerData.savePlayerData(plugin, player);
                     player.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessage")));
                 } else {
                     pEffects.pEffect(player, false);
                     playerDataConfig.set("nightVision.player." + pUUID + ".nvp", false);
                     playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
-                    savePlayerDataConfig(playerDataConfig, playerDataFile);
+                    PlayerData.savePlayerData(plugin, player);
                     player.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessage")));
                 }
             }
@@ -130,12 +124,13 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         } else if (args.length == 2) {
             if (player.hasPermission("nightvisionplus.command.use")) {
                 if (args[0].equalsIgnoreCase("reset")) {
-                    completions.add("playerData.yml");
-//                    completions.add("config.yml");
+                    completions.add("PlayerData");
+                    completions.add("config.yml");
                     completions.add("all");
                 }
             }
         }
-        return completions;
+        String lastArg = args[args.length - 1].toUpperCase();
+        return completions.stream().filter(s -> s.toUpperCase().startsWith(lastArg.toUpperCase())).collect(Collectors.toList());
     }
 }
