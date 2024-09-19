@@ -4,6 +4,9 @@ import me.zombieman.nightvisionplus.NightVisionPlus;
 import me.zombieman.nightvisionplus.data.PlayerData;
 import me.zombieman.nightvisionplus.effects.PlayerEffects;
 import me.zombieman.nightvisionplus.utils.ColorUtils;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -13,6 +16,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,6 +83,13 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     } else {
                         player.sendMessage(ChatColor.YELLOW + "/nvp reset <all, config.yml, PlayerData>");
                     }
+                } else {
+                    player.sendMessage(MiniMessage.miniMessage().deserialize("""
+                            <#7289da><strikethrough>                                            </strikethrough>
+                            <#7289da><bold>Click Here To Get Support!</bold>
+                            <#7289da><strikethrough>                                            </strikethrough>""")
+                            .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/SuypvRBa4c"))
+                            .hoverEvent(HoverEvent.showText(MiniMessage.miniMessage().deserialize("<#7289da><bold>Click Here To Get Support!"))));
                 }
             } else {
                 boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
@@ -120,6 +131,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             if (player.hasPermission("nightvisionplus.command.use")) {
                 completions.add("reload");
                 completions.add("reset");
+                completions.add("support");
             }
         } else if (args.length == 2) {
             if (player.hasPermission("nightvisionplus.command.use")) {

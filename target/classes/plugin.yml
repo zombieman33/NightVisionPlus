@@ -1,5 +1,5 @@
 name: NightVisionPlus
-version: '2.2.0'
+version: '2.2.2'
 main: me.zombieman.nightvisionplus.NightVisionPlus
 api-version: 1.13
 commands:
