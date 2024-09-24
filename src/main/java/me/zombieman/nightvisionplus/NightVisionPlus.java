@@ -5,10 +5,7 @@ import me.zombieman.nightvisionplus.commands.NightVisionCommand;
 import me.zombieman.nightvisionplus.data.PlayerData;
 import me.zombieman.nightvisionplus.data.PlayerManager;
 import me.zombieman.nightvisionplus.effects.PlayerEffects;
-import me.zombieman.nightvisionplus.listeners.DeathListener;
-import me.zombieman.nightvisionplus.listeners.IgnoredCommands;
-import me.zombieman.nightvisionplus.listeners.JoinListener;
-import me.zombieman.nightvisionplus.listeners.MilkConsumeEvent;
+import me.zombieman.nightvisionplus.listeners.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -43,6 +40,7 @@ public final class NightVisionPlus extends JavaPlugin {
         new DeathListener(this);
         new MilkConsumeEvent(this);
         new IgnoredCommands(this);
+        new PlayerListener(this);
     }
 
     @Override
