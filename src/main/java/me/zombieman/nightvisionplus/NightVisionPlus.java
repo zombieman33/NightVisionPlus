@@ -17,6 +17,8 @@ public final class NightVisionPlus extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
 
+        PlayerData.initDataFolder(this);
+
         File configFile = new File(getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             getLogger().info("Config file not found, creating...");
