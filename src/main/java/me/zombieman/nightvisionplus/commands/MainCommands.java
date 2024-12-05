@@ -43,7 +43,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, pUUID);
         PlayerEffects pEffects = new PlayerEffects();
 
-        if (player.hasPermission("nightvisionplus.command.use")) {
+        if (player.hasPermission("nightvisionplus.command.admin")) {
             if (args.length >= 1) {
                 if (args[0].equalsIgnoreCase("reload")) {
                     long startTime = System.currentTimeMillis();
@@ -128,13 +128,13 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         Player player = (Player) sender;
 
         if (args.length == 1) {
-            if (player.hasPermission("nightvisionplus.command.use")) {
+            if (player.hasPermission("nightvisionplus.command.admin")) {
                 completions.add("reload");
                 completions.add("reset");
                 completions.add("support");
             }
         } else if (args.length == 2) {
-            if (player.hasPermission("nightvisionplus.command.use")) {
+            if (player.hasPermission("nightvisionplus.command.admin")) {
                 if (args[0].equalsIgnoreCase("reset")) {
                     completions.add("PlayerData");
                     completions.add("config.yml");
