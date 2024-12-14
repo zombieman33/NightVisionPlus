@@ -26,13 +26,9 @@ public final class NightVisionPlus extends JavaPlugin {
         }
 
         // Commands
-        NightVisionCommand nightVisionCommand = new NightVisionCommand(this);
-        PluginCommand nightVisionCmd = getCommand("night-vision");
-        if (nightVisionCmd != null) nightVisionCmd.setExecutor(nightVisionCommand);
 
-        MainCommands mainCommands = new MainCommands(this);
-        PluginCommand mainCmd = getCommand("nightvisionplus");
-        if (mainCmd != null) mainCmd.setExecutor(mainCommands);
+        getCommand("night-vision").setExecutor(new NightVisionCommand(this));
+        getCommand("nightvisionplus").setExecutor(new MainCommands(this));
 
         new PlayerData();
         new PlayerManager(this);
