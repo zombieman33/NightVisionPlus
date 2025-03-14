@@ -24,20 +24,20 @@ public class MilkConsumeEvent implements Listener {
 
     @EventHandler
     public void onMilkConsume(PlayerItemConsumeEvent event) {
-        if (event.getItem().getType().name().equals("MILK_BUCKET")) {
-            Player p = event.getPlayer();
-            UUID pUUID = p.getUniqueId();
-            FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, pUUID);
-            boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
-            if (wantsEnable) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        PlayerEffects playerEffects = new PlayerEffects();
-                        playerEffects.pEffect(p, true);
-                    }
-                }.runTaskLater(plugin, 1);
+        if (!event.getItem().getType().name().equals("MILK_BUCKET")) return;
+
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, uuid);
+        boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + uuid + ".nvp", false);
+
+        if (!wantsEnable) return;
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                PlayerEffects.pEffect(player, true);
             }
-        }
+        }.runTaskLater(plugin, 1);
     }
 }

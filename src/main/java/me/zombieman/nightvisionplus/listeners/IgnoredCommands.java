@@ -27,59 +27,24 @@ public class IgnoredCommands implements Listener {
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {
-        Player p = event.getPlayer();
+        Player player = event.getPlayer();
         String command = event.getMessage();
-        UUID pUUID = p.getUniqueId();
-        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, pUUID);
+        UUID uuid = player.getUniqueId();
+        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, uuid);
 
-        if (p.hasPermission("nightvisionplus.command.apply")) {
-            List<String> ignoredCommands = new ArrayList<>();
-            ignoredCommands.add("/nv");
-            ignoredCommands.add("/night-vision");
-            ignoredCommands.add("/nightvisionplus:night-vision");
-            ignoredCommands.add("/nightvisionplus:nv");
-            ignoredCommands.add("/nightvisionplus:nightvisionplus reset");
-            ignoredCommands.add("/nightvisionplus:nvp reset");
-            ignoredCommands.add("/nightvisionplus:nightvisionplus reset all");
-            ignoredCommands.add("/nightvisionplus:nvp reset all");
-            ignoredCommands.add("/nightvisionplus:nightvisionplus reset PlayerData");
-            ignoredCommands.add("/nightvisionplus:nvp reset PlayerData");
+        if (!player.hasPermission("nightvisionplus.command.apply")) return;
 
-            if (!command.startsWith("/nv")) {
-                for (Player oPlayer : Bukkit.getOnlinePlayers()) {
-                    boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + oPlayer.getUniqueId() + ".nvp", false);
-                    if (wantsEnable) {
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                PlayerEffects playerEffects = new PlayerEffects();
-                                playerEffects.pEffect(oPlayer, true);
-                            }
-                        }.runTaskLater(plugin, 5);
+        if (!command.startsWith("/nv")) {
+            for (Player oPlayer : Bukkit.getOnlinePlayers()) {
+                boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + oPlayer.getUniqueId() + ".nvp", false);
+                if (!wantsEnable) continue;
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        PlayerEffects.pEffect(oPlayer, true);
                     }
-                }
+                }.runTaskLater(plugin, 5);
             }
         }
     }
 }
-
-//        List<String> ignoredCommands = new ArrayList<>();
-//
-//        String pName = p.getName();
-//        ignoredCommands.add("/heal");
-//        ignoredCommands.add("/heal " + pName);
-//        ignoredCommands.add("/effect clear");
-//        ignoredCommands.add("/effect clear " + pName);
-//        ignoredCommands.add("/effect clear " + pName + " minecraft:night_vision");
-//        ignoredCommands.add("/effect clear " + pName + " night_vision");
-//        ignoredCommands.add("/effect clear @p");
-//        ignoredCommands.add("/v");
-//        ignoredCommands.add("/sv");
-//        ignoredCommands.add("/vanish");
-//        ignoredCommands.add("/supervanish");
-//        ignoredCommands.add("/supervanish:v");
-//        ignoredCommands.add("/supervanish:sv");
-//        ignoredCommands.add("/supervanish:vanish");
-//        ignoredCommands.add("/supervanish:supervanish");
-
-//        if (ignoredCommands.contains(command)) {

@@ -28,19 +28,18 @@ public class DeathListener implements Listener {
     }
 
     @EventHandler
-    public void onRespawn(PlayerRespawnEvent e) {
-        Player p = e.getPlayer();
-        UUID pUUID = p.getUniqueId();
-        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, pUUID);
-        boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
-        if (wantsEnable) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    PlayerEffects playerEffects = new PlayerEffects();
-                    playerEffects.pEffect(p, true);
-                }
-            }.runTaskLater(plugin, 1);
-        }
+    public void onRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, uuid);
+        boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + uuid + ".nvp", false);
+        if (!wantsEnable) return;
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                PlayerEffects.pEffect(player, true);
+            }
+        }.runTaskLater(plugin, 1);
     }
 }

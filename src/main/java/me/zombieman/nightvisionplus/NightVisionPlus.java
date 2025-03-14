@@ -32,7 +32,7 @@ public final class NightVisionPlus extends JavaPlugin {
 
         new PlayerData();
         new PlayerManager(this);
-        new PlayerEffects();
+        new PlayerEffects(this);
 
         new JoinListener(this);
         new DeathListener(this);

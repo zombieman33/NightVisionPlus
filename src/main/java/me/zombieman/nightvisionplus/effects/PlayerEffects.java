@@ -8,18 +8,30 @@ import org.bukkit.potion.PotionEffectType;
 
 public class PlayerEffects {
 
-    public void pEffect(Player p, boolean b) {
+    private static NightVisionPlus plugin;
+
+    public PlayerEffects(NightVisionPlus plugin) {
+        PlayerEffects.plugin = plugin;
+    }
+
+    public static void pEffect(Player player, boolean b) {
         PotionEffectType effectType = PotionEffectType.NIGHT_VISION;
         int durationTicks = Integer.MAX_VALUE;
         int amplifier = 1;
         PotionEffect effect = new PotionEffect(effectType, durationTicks, amplifier, true, false);
         if (b) {
-            if (!p.hasPotionEffect(effectType)) {
-                p.addPotionEffect(effect, true);
-            }
-        } else {
-            p.removePotionEffect(effectType);
+            if (!player.hasPotionEffect(effectType)) player.addPotionEffect(effect, true);
+            return;
         }
+
+        player.removePotionEffect(effectType);
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (player.hasPotionEffect(effectType)) {
+                System.out.println("The player: " + player.getName() + " still had night vision after disabling it. Force removing now...");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/effect clear " + player.getName() + " minecraft:night_vision");
+            }
+        }, 5L);
     }
 
 }

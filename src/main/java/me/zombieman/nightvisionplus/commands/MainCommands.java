@@ -9,6 +9,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -41,78 +42,83 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         Player player = (Player) sender;
         UUID pUUID = player.getUniqueId();
         FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, pUUID);
-        PlayerEffects pEffects = new PlayerEffects();
 
-        if (player.hasPermission("nightvisionplus.command.admin")) {
-            if (args.length >= 1) {
-                if (args[0].equalsIgnoreCase("reload")) {
+        if (!player.hasPermission("nightvisionplus.command.admin")) {
+            player.sendMessage(ChatColor.RED + "You don't have permission to run this command.");
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+            return false;
+        }
+        if (args.length >= 1) {
+            if (args[0].equalsIgnoreCase("reload")) {
+                long startTime = System.currentTimeMillis();
+                try {
+                    plugin.reloadConfig();
+                    PlayerData.reloadAllPlayerData(plugin);
+                    long endTime = System.currentTimeMillis();
+                    long elapsedTime = endTime - startTime;
+
+                    player.sendMessage(ColorUtils.color("&aSuccessfully reloaded the config files in (" + elapsedTime + "ms)"));
+                    return true;
+                } catch (Exception e) {
+                    player.sendMessage(ChatColor.RED + "An error occurred while reloading the plugin: " + e.getMessage());
+                }
+            } else if (args[0].equalsIgnoreCase("reset")) {
+                if (args[1].equalsIgnoreCase("config.yml")) {
                     long startTime = System.currentTimeMillis();
-                    try {
-                        plugin.reloadConfig();
-                        PlayerData.reloadAllPlayerData(plugin);
-                        long endTime = System.currentTimeMillis();
-                        long elapsedTime = endTime - startTime;
-
-                        player.sendMessage(ColorUtils.color("&aSuccessfully reloaded the config files in (" + elapsedTime + "ms)"));
-
-                    } catch (Exception e) {
-                        player.sendMessage(ChatColor.RED + "An error occurred while reloading the plugin: " + e.getMessage());
-                    }
-                } else if (args[0].equalsIgnoreCase("reset")) {
-                    if (args[1].equalsIgnoreCase("config.yml")) {
-                        long startTime = System.currentTimeMillis();
-                        plugin.saveResource("config.yml", true);
-                        plugin.reloadConfig();
-                        long endTime = System.currentTimeMillis();
-                        long time = endTime - startTime + 1;
-                        player.sendMessage(ChatColor.GREEN + "You successfully reset " + args[1] + ChatColor.AQUA + " (" + time + "ms)");
-                    } else if (args[1].equalsIgnoreCase("playerData")) {
-                        long startTime = System.currentTimeMillis();
-                        PlayerData.removeAllPlayerFiles(plugin);
-                        long endTime = System.currentTimeMillis();
-                        long time = endTime - startTime + 1;
-                        player.sendMessage(ChatColor.GREEN + "You successfully reset " + args[1] + ChatColor.AQUA + " (" + time + "ms)");
-                    } else if (args[1].equalsIgnoreCase("all")) {
-                        long startTime = System.currentTimeMillis();
-                        plugin.saveResource("config.yml", true);
-                        plugin.reloadConfig();
-                        PlayerData.removeAllPlayerFiles(plugin);
-                        long endTime = System.currentTimeMillis();
-                        long time = endTime - startTime + 1;
-                        player.sendMessage(ChatColor.GREEN + "You successfully reset all configs " + ChatColor.AQUA + "(" + time + "ms)");
-                    } else {
-                        player.sendMessage(ChatColor.YELLOW + "/nvp reset <all, config.yml, PlayerData>");
-                    }
+                    plugin.saveResource("config.yml", true);
+                    plugin.reloadConfig();
+                    long endTime = System.currentTimeMillis();
+                    long time = endTime - startTime + 1;
+                    player.sendMessage(ChatColor.GREEN + "You successfully reset " + args[1] + ChatColor.AQUA + " (" + time + "ms)");
+                    return true;
+                } else if (args[1].equalsIgnoreCase("playerData")) {
+                    long startTime = System.currentTimeMillis();
+                    PlayerData.removeAllPlayerFiles(plugin);
+                    long endTime = System.currentTimeMillis();
+                    long time = endTime - startTime + 1;
+                    player.sendMessage(ChatColor.GREEN + "You successfully reset " + args[1] + ChatColor.AQUA + " (" + time + "ms)");
+                    return true;
+                } else if (args[1].equalsIgnoreCase("all")) {
+                    long startTime = System.currentTimeMillis();
+                    plugin.saveResource("config.yml", true);
+                    plugin.reloadConfig();
+                    PlayerData.removeAllPlayerFiles(plugin);
+                    long endTime = System.currentTimeMillis();
+                    long time = endTime - startTime + 1;
+                    player.sendMessage(ChatColor.GREEN + "You successfully reset all configs " + ChatColor.AQUA + "(" + time + "ms)");
+                    return true;
                 } else {
-                    player.sendMessage(MiniMessage.miniMessage().deserialize("""
-                            <#7289da><strikethrough>                                            </strikethrough>
-                            <#7289da><bold>Click Here To Get Support!</bold>
-                            <#7289da><strikethrough>                                            </strikethrough>""")
-                            .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/SuypvRBa4c"))
-                            .hoverEvent(HoverEvent.showText(MiniMessage.miniMessage().deserialize("<#7289da><bold>Click Here To Get Support!"))));
+                    player.sendMessage(ChatColor.YELLOW + "/nvp reset <all, config.yml, PlayerData>");
+                    return true;
                 }
             } else {
-                boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
-                if (!wantsEnable) {
-                    pEffects.pEffect(player, true);
-//                    pData.savePlayerData(player, true);
-                    playerDataConfig.set("nightVision.player." + pUUID + ".nvp", true);
-                    playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
-                    PlayerData.savePlayerData(plugin, player);
-                    player.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessage")));
-                } else {
-                    pEffects.pEffect(player, false);
-                    playerDataConfig.set("nightVision.player." + pUUID + ".nvp", false);
-                    playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
-                    PlayerData.savePlayerData(plugin, player);
-                    player.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessage")));
-                }
+                player.sendMessage(MiniMessage.miniMessage().deserialize("""
+                                <#7289da><strikethrough>                                            </strikethrough>
+                                <#7289da><bold>Click Here To Get Support!</bold>
+                                <#7289da><strikethrough>                                            </strikethrough>""")
+                        .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/SuypvRBa4c"))
+                        .hoverEvent(HoverEvent.showText(MiniMessage.miniMessage().deserialize("<#7289da><bold>Click Here To Get Support!"))));
+                return true;
             }
         } else {
-            player.sendMessage(ChatColor.RED + "You don't have permission to run this command.");
+            boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
+            if (!wantsEnable) {
+                applyOrRemove(player, true, playerDataConfig, pUUID, "enableMessage");
+                return true;
+            }
+            applyOrRemove(player, false, playerDataConfig, pUUID, "disableMessage");
         }
         return false;
     }
+
+    private void applyOrRemove(Player player, boolean b, FileConfiguration playerDataConfig, UUID pUUID, String disableMessage) {
+        PlayerEffects.pEffect(player, b);
+        playerDataConfig.set("nightVision.player." + pUUID + ".nvp", b);
+        playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
+        PlayerData.savePlayerData(plugin, player);
+        player.sendMessage(ColorUtils.color(plugin.getConfig().getString(disableMessage)));
+    }
+
     private void savePlayerDataConfig(FileConfiguration config, File configFile) {
         try {
             config.save(configFile);

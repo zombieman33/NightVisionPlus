@@ -24,18 +24,18 @@ public class JoinListener implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        Player p = e.getPlayer();
-        boolean hasPlayedBefore = p.hasPlayedBefore();
-        if (hasPlayedBefore) {
-            UUID pUUID = p.getUniqueId();
-            FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, pUUID);
-            PlayerEffects pEffects = new PlayerEffects();
-            boolean hasEnabled = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
-            if (hasEnabled) {
-                pEffects.pEffect(p, true);
-            }
-        }
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        boolean hasPlayedBefore = player.hasPlayedBefore();
+        if (!hasPlayedBefore) return;
+
+        UUID uuid = player.getUniqueId();
+        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, uuid);
+        boolean hasEnabled = playerDataConfig.getBoolean("nightVision.player." + uuid + ".nvp", false);
+
+        if (!hasEnabled) return;
+
+        PlayerEffects.pEffect(player, true);
     }
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {

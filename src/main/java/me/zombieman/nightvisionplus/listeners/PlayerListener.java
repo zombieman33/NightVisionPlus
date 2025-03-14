@@ -26,15 +26,13 @@ public class PlayerListener implements Listener {
 
         FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, player.getUniqueId());
         boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + player.getUniqueId() + ".nvp", false);
-        if (wantsEnable) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    PlayerEffects playerEffects = new PlayerEffects();
-                    playerEffects.pEffect(player, true);
-                }
-            }.runTaskLater(plugin, 10);
-        }
+        if (!wantsEnable) return;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                PlayerEffects.pEffect(player, true);
+            }
+        }.runTaskLater(plugin, 10);
     }
 
 }
