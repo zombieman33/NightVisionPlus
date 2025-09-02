@@ -36,7 +36,7 @@ public class MilkConsumeEvent implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                PlayerEffects.pEffect(player, true);
+                PlayerEffects.pEffect(plugin, player, true);
             }
         }.runTaskLater(plugin, 1);
     }

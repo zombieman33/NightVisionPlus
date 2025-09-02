@@ -35,7 +35,7 @@ public class JoinListener implements Listener {
 
         if (!hasEnabled) return;
 
-        PlayerEffects.pEffect(player, true);
+        PlayerEffects.pEffect(plugin, player, true);
     }
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {

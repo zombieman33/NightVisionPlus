@@ -112,7 +112,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     }
 
     private void applyOrRemove(Player player, boolean b, FileConfiguration playerDataConfig, UUID pUUID, String disableMessage) {
-        PlayerEffects.pEffect(player, b);
+        PlayerEffects.pEffect(plugin, player, b);
         playerDataConfig.set("nightVision.player." + pUUID + ".nvp", b);
         playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
         PlayerData.savePlayerData(plugin, player);

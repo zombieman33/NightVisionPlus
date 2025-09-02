@@ -66,7 +66,7 @@ public class NightVisionCommand implements CommandExecutor {
                 playerDataConfig.set("nightVision.player." + tUUID + ".nvp", true);
                 playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
                 PlayerData.savePlayerData(plugin, target);
-                PlayerEffects.pEffect(target, true);
+                PlayerEffects.pEffect(plugin, target, true);
                 player.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessageOthers")
                         .replace("%player%", player.getName())
                         .replace("%target-player%", targetName)));
@@ -79,7 +79,7 @@ public class NightVisionCommand implements CommandExecutor {
                 playerDataConfig.set("nightVision.player." + tUUID + ".nvp", false);
                 playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
                 PlayerData.savePlayerData(plugin, target);
-                PlayerEffects.pEffect(target, false);
+                PlayerEffects.pEffect(plugin, target, false);
                 player.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessageOthers")
                         .replace("%player%", player.getName())
                         .replace("%target-player%", targetName)));
@@ -101,7 +101,7 @@ public class NightVisionCommand implements CommandExecutor {
     }
 
     private void applyOrRemove(Player player, boolean b, FileConfiguration playerDataConfig, UUID pUUID, String disableMessage) {
-        PlayerEffects.pEffect(player, b);
+        PlayerEffects.pEffect(plugin, player, b);
         playerDataConfig.set("nightVision.player." + pUUID + ".nvp", b);
         playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
         PlayerData.savePlayerData(plugin, player);

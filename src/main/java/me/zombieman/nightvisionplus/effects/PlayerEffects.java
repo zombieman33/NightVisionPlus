@@ -14,7 +14,7 @@ public class PlayerEffects {
         PlayerEffects.plugin = plugin;
     }
 
-    public static void pEffect(Player player, boolean b) {
+    public static void pEffect(NightVisionPlus plugin, Player player, boolean b) {
         PotionEffectType effectType = PotionEffectType.NIGHT_VISION;
         int durationTicks = Integer.MAX_VALUE;
         int amplifier = 1;

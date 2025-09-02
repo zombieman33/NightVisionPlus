@@ -41,7 +41,7 @@ public class IgnoredCommands implements Listener {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        PlayerEffects.pEffect(oPlayer, true);
+                        PlayerEffects.pEffect(plugin, oPlayer, true);
                     }
                 }.runTaskLater(plugin, 5);
             }
