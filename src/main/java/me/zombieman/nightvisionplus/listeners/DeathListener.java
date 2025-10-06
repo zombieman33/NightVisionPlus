@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.Plugin;
@@ -30,6 +31,22 @@ public class DeathListener implements Listener {
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, uuid);
+        boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + uuid + ".nvp", false);
+        if (!wantsEnable) return;
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                PlayerEffects.pEffect(plugin, player, true);
+            }
+        }.runTaskLater(plugin, 1);
+    }
+    @EventHandler
+    public void onTotemUse(EntityResurrectEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+
         UUID uuid = player.getUniqueId();
         FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, uuid);
         boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + uuid + ".nvp", false);
