@@ -6,12 +6,16 @@ import me.zombieman.nightvisionplus.data.PlayerData;
 import me.zombieman.nightvisionplus.data.PlayerManager;
 import me.zombieman.nightvisionplus.effects.PlayerEffects;
 import me.zombieman.nightvisionplus.listeners.*;
+import me.zombieman.nightvisionplus.placeholders.NightVisionPlaceholder;
+import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 
 public final class NightVisionPlus extends JavaPlugin {
+
+    public NightVisionPlaceholder nightVisionPlaceholder;
 
     @Override
     public void onEnable() {
@@ -24,6 +28,23 @@ public final class NightVisionPlus extends JavaPlugin {
             getLogger().info("Config file not found, creating...");
             saveResource("config.yml", false);
         }
+
+        // Check for PlaceholderAPI
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") == null) {
+            getLogger().warning("-----------------------------------------");
+            getLogger().warning("WARNING");
+            getLogger().warning("PlaceholderAPI plugin is not installed!");
+            getLogger().warning(this.getPluginMeta().getName() + " is now being disabled!");
+            getLogger().warning("-----------------------------------------");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        // Placeholders
+
+        nightVisionPlaceholder = new NightVisionPlaceholder(this);
+        nightVisionPlaceholder.register();
+        System.out.println("Registered Night Vision Placeholder");
 
         // Commands
 
@@ -44,5 +65,10 @@ public final class NightVisionPlus extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+
+        if (nightVisionPlaceholder != null) {
+            nightVisionPlaceholder.unregister();
+        }
+
     }
 }

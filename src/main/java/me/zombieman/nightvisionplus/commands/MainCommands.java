@@ -117,6 +117,8 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         playerDataConfig.set("nightVision.player." + pUUID + ".ign", player.getName());
         PlayerData.savePlayerData(plugin, player);
         player.sendMessage(ColorUtils.color(plugin.getConfig().getString(disableMessage)));
+
+        plugin.nightVisionPlaceholder.updateNVP(player.getUniqueId(), b);
     }
 
     private void savePlayerDataConfig(FileConfiguration config, File configFile) {
