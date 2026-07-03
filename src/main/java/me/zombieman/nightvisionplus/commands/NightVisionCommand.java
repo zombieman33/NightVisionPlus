@@ -27,74 +27,78 @@ public class NightVisionCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("You can't run this command from the console");
-            return true;
-        }
+        if (args.length == 0) {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage("Console must specify a player: /" + label + " <player>");
+                return true;
+            }
 
-        Player player = (Player) sender;
-
-        if (!player.hasPermission("nightvisionplus.command.apply")) {
-            player.sendMessage(ChatColor.RED + "You don't have permission to run this command.");
-            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
-            return false;
-        }
-
-        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, player.getUniqueId());
-        UUID pUUID = player.getUniqueId();
-        boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
-
-        if (args.length >= 1) {
-            if (!player.hasPermission("nightvisionplus.command.apply.other")) {
-                player.sendMessage(ChatColor.RED + "You don't have permission to apply effects to other players.");
+            if (!player.hasPermission("nightvisionplus.command.apply")) {
+                player.sendMessage(ChatColor.RED + "You don't have permission to run this command.");
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                 return false;
             }
 
-            String targetName = args[0];
-            Player target = Bukkit.getPlayerExact(targetName);
+            FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, player.getUniqueId());
+            UUID pUUID = player.getUniqueId();
+            boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
 
-            if (target == null) {
-                player.sendMessage(ChatColor.RED + "'" + targetName + "'" + " isn't online.");
-                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
-                return false;
-            }
-            UUID tUUID = target.getUniqueId();
-
-            boolean TargetWantsEnable = PlayerData.getPlayerDataConfig(plugin, player.getUniqueId()).getBoolean("nightVision.player." + tUUID + ".nvp", false);
-            if (!TargetWantsEnable) {
-                playerDataConfig.set("nightVision.player." + tUUID + ".nvp", true);
-                playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
-                PlayerData.savePlayerData(plugin, target);
-                PlayerEffects.pEffect(plugin, target, true);
-                player.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessageOthers")
-                        .replace("%player%", player.getName())
-                        .replace("%target-player%", targetName)));
-                if (target != player) {
-                    target.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessageToOther")
-                            .replace("%player%", player.getName())
-                            .replace("%target-player%", targetName)));
-                }
-            } else {
-                playerDataConfig.set("nightVision.player." + tUUID + ".nvp", false);
-                playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
-                PlayerData.savePlayerData(plugin, target);
-                PlayerEffects.pEffect(plugin, target, false);
-                player.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessageOthers")
-                        .replace("%player%", player.getName())
-                        .replace("%target-player%", targetName)));
-                if (target != player) {
-                    target.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessageToOther")
-                            .replace("%player%", player.getName())
-                            .replace("%target-player%", targetName)));
-                }
-            }
-
-        } else {
             if (!wantsEnable) {
                 applyOrRemove(player, true, playerDataConfig, pUUID, "enableMessage");
             } else {
                 applyOrRemove(player, false, playerDataConfig, pUUID, "disableMessage");
+            }
+            return true;
+        }
+
+        if (!sender.hasPermission("nightvisionplus.command.apply.other")) {
+            sender.sendMessage(ChatColor.RED + "You don't have permission to apply effects to other players.");
+            if (sender instanceof Player player) {
+                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+            }
+            return false;
+        }
+
+        String targetName = args[0];
+        Player target = Bukkit.getPlayerExact(targetName);
+
+        if (target == null) {
+            sender.sendMessage(ChatColor.RED + "'" + targetName + "'" + " isn't online.");
+            if (sender instanceof Player player) {
+                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+            }
+            return false;
+        }
+        UUID tUUID = target.getUniqueId();
+        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, tUUID);
+        String senderName = sender instanceof Player ? sender.getName() : "Console";
+
+        boolean TargetWantsEnable = playerDataConfig.getBoolean("nightVision.player." + tUUID + ".nvp", false);
+        if (!TargetWantsEnable) {
+            playerDataConfig.set("nightVision.player." + tUUID + ".nvp", true);
+            playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
+            PlayerData.savePlayerData(plugin, target);
+            PlayerEffects.pEffect(plugin, target, true);
+            sender.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessageOthers")
+                    .replace("%player%", senderName)
+                    .replace("%target-player%", targetName)));
+            if (target != sender) {
+                target.sendMessage(ColorUtils.color(plugin.getConfig().getString("enableMessageToOther")
+                        .replace("%player%", senderName)
+                        .replace("%target-player%", targetName)));
+            }
+        } else {
+            playerDataConfig.set("nightVision.player." + tUUID + ".nvp", false);
+            playerDataConfig.set("nightVision.player." + tUUID + ".ign", targetName);
+            PlayerData.savePlayerData(plugin, target);
+            PlayerEffects.pEffect(plugin, target, false);
+            sender.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessageOthers")
+                    .replace("%player%", senderName)
+                    .replace("%target-player%", targetName)));
+            if (target != sender) {
+                target.sendMessage(ColorUtils.color(plugin.getConfig().getString("disableMessageToOther")
+                        .replace("%player%", senderName)
+                        .replace("%target-player%", targetName)));
             }
         }
         return true;

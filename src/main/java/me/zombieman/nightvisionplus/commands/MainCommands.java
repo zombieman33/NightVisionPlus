@@ -35,17 +35,11 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "This command can only be run by a player.");
-            return true;
-        }
-        Player player = (Player) sender;
-        UUID pUUID = player.getUniqueId();
-        FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, pUUID);
-
-        if (!player.hasPermission("nightvisionplus.command.admin")) {
-            player.sendMessage(ChatColor.RED + "You don't have permission to run this command.");
-            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+        if (!sender.hasPermission("nightvisionplus.command.admin")) {
+            sender.sendMessage(ChatColor.RED + "You don't have permission to run this command.");
+            if (sender instanceof Player player) {
+                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+            }
             return false;
         }
         if (args.length >= 1) {
@@ -57,26 +51,30 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     long endTime = System.currentTimeMillis();
                     long elapsedTime = endTime - startTime;
 
-                    player.sendMessage(ColorUtils.color("&aSuccessfully reloaded the config files in (" + elapsedTime + "ms)"));
+                    sender.sendMessage(ColorUtils.color("&aSuccessfully reloaded the config files in (" + elapsedTime + "ms)"));
                     return true;
                 } catch (Exception e) {
-                    player.sendMessage(ChatColor.RED + "An error occurred while reloading the plugin: " + e.getMessage());
+                    sender.sendMessage(ChatColor.RED + "An error occurred while reloading the plugin: " + e.getMessage());
                 }
             } else if (args[0].equalsIgnoreCase("reset")) {
+                if (args.length < 2) {
+                    sender.sendMessage(ChatColor.YELLOW + "/nvp reset <all, config.yml, PlayerData>");
+                    return true;
+                }
                 if (args[1].equalsIgnoreCase("config.yml")) {
                     long startTime = System.currentTimeMillis();
                     plugin.saveResource("config.yml", true);
                     plugin.reloadConfig();
                     long endTime = System.currentTimeMillis();
                     long time = endTime - startTime + 1;
-                    player.sendMessage(ChatColor.GREEN + "You successfully reset " + args[1] + ChatColor.AQUA + " (" + time + "ms)");
+                    sender.sendMessage(ChatColor.GREEN + "You successfully reset " + args[1] + ChatColor.AQUA + " (" + time + "ms)");
                     return true;
                 } else if (args[1].equalsIgnoreCase("playerData")) {
                     long startTime = System.currentTimeMillis();
                     PlayerData.removeAllPlayerFiles(plugin);
                     long endTime = System.currentTimeMillis();
                     long time = endTime - startTime + 1;
-                    player.sendMessage(ChatColor.GREEN + "You successfully reset " + args[1] + ChatColor.AQUA + " (" + time + "ms)");
+                    sender.sendMessage(ChatColor.GREEN + "You successfully reset " + args[1] + ChatColor.AQUA + " (" + time + "ms)");
                     return true;
                 } else if (args[1].equalsIgnoreCase("all")) {
                     long startTime = System.currentTimeMillis();
@@ -85,14 +83,14 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     PlayerData.removeAllPlayerFiles(plugin);
                     long endTime = System.currentTimeMillis();
                     long time = endTime - startTime + 1;
-                    player.sendMessage(ChatColor.GREEN + "You successfully reset all configs " + ChatColor.AQUA + "(" + time + "ms)");
+                    sender.sendMessage(ChatColor.GREEN + "You successfully reset all configs " + ChatColor.AQUA + "(" + time + "ms)");
                     return true;
                 } else {
-                    player.sendMessage(ChatColor.YELLOW + "/nvp reset <all, config.yml, PlayerData>");
+                    sender.sendMessage(ChatColor.YELLOW + "/nvp reset <all, config.yml, PlayerData>");
                     return true;
                 }
             } else {
-                player.sendMessage(MiniMessage.miniMessage().deserialize("""
+                sender.sendMessage(MiniMessage.miniMessage().deserialize("""
                                 <#7289da><strikethrough>                                            </strikethrough>
                                 <#7289da><bold>Click Here To Get Support!</bold>
                                 <#7289da><strikethrough>                                            </strikethrough>""")
@@ -101,6 +99,12 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 return true;
             }
         } else {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage(ChatColor.RED + "This command can only be run by a player.");
+                return true;
+            }
+            UUID pUUID = player.getUniqueId();
+            FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(plugin, pUUID);
             boolean wantsEnable = playerDataConfig.getBoolean("nightVision.player." + pUUID + ".nvp", false);
             if (!wantsEnable) {
                 applyOrRemove(player, true, playerDataConfig, pUUID, "enableMessage");
@@ -133,16 +137,14 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> completions = new ArrayList<>();
 
-        Player player = (Player) sender;
-
         if (args.length == 1) {
-            if (player.hasPermission("nightvisionplus.command.admin")) {
+            if (sender.hasPermission("nightvisionplus.command.admin")) {
                 completions.add("reload");
                 completions.add("reset");
                 completions.add("support");
             }
         } else if (args.length == 2) {
-            if (player.hasPermission("nightvisionplus.command.admin")) {
+            if (sender.hasPermission("nightvisionplus.command.admin")) {
                 if (args[0].equalsIgnoreCase("reset")) {
                     completions.add("PlayerData");
                     completions.add("config.yml");
